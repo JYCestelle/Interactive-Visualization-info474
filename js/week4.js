@@ -126,17 +126,36 @@
     let xMap = map.x;
     let yMap = map.y;
 
+    // make tooltip
+    let div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+
+
     // append data to SVG and plot as points
     svgContainer.selectAll('.dot')
       .data(data)
       .enter()
       .append('circle')
-      .transition()
-      .duration(800)
-      .attr('cx', xMap)
-      .attr('cy', yMap)
-      .attr('r', (d) => pop_map_func(d["pop_mlns"]))
-      .attr('fill', "#4286f4");
+        .attr('cx', xMap)
+        .attr('cy', yMap)
+        .attr('r', (d) => pop_map_func(d["pop_mlns"]))
+        .attr('fill', "#4286f4")
+        // add tooltip functionality to points
+        .on("mouseover", (d) => {
+          div.transition()
+            .duration(200)
+            .style("opacity", .7);
+          div.html(d.location + "<br/>" + numberWithCommas(d["pop_mlns"]*1000000))
+            .style("left", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY - 28) + "px");
+        })
+        .on("mouseout", (d) => {
+          div.transition()
+            .duration(500)
+            .style("opacity", 0);
+        });
   }
 
   // draw the axes and ticks
